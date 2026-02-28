@@ -33,15 +33,17 @@ model Users {
 }
 
 model Places {
-  id        String    @db.Uuid @id @default(uuid())
-  name      String    @db.VarChar(20)
-  address   String    @db.VarChar(200)
-  thumbnail String    @db.VarChar(100)
-  type      PlaceType
-  lat       Float
-  lng       Float
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @default(now()) @map("updated_at")
+  id            String    @db.Uuid @id @default(uuid())
+  name          String    @db.VarChar(20)
+  address       String    @db.VarChar(200)
+  detailAddress String?   @db.VarChar(100) @map("detail_address")
+  postcode      String    @db.VarChar(6)
+  thumbnail     String?   @db.VarChar(100)
+  type          PlaceType
+  lat           Float
+  lng           Float
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @default(now()) @map("updated_at")
 
   myPlaces MyPlaces[]
 
