@@ -42,16 +42,18 @@ model Places {
   type          PlaceType
   lat           Float
   lng           Float
+  categoryId    Int?      @map("category_id")
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @default(now()) @map("updated_at")
 
-  categories PlaceCategory[]
-  myPlaces   MyPlaces[]
+  category Category?  @relation(fields: [categoryId], references: [id])
+  myPlaces MyPlaces[]
 
   @@index([name])
   @@index([address])
   @@index([type])
-  @@index([lat, lng])
+  @@index([lat])
+  @@index([lng])
   @@map("places")
 }
 
@@ -72,19 +74,7 @@ model Category {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @default(now()) @map("updated_at")
 
-  placeCategories PlaceCategory[]
+  places Places[]
 
   @@map("category")
-}
-
-model PlaceCategory {
-  placeId    String   @db.Uuid @map("place_id") @unique
-  categoryId Int      @map("category_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @default(now()) @map("updated_at")
-  place      Places   @relation(fields: [placeId], references: [id])
-  category   Category @relation(fields: [categoryId], references: [id])
-
-  @@id([placeId, categoryId])
-  @@map("place_category")
 }
