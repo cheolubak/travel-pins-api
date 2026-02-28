@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
 import { PrismaService } from '../database/prisma.service';
@@ -15,6 +15,7 @@ export class PlacesService {
   async registerPlaces(dto: RegisterPlaceDto) {
     const {
       address,
+      categoryId,
       detailAddress,
       lat,
       lng,
@@ -24,6 +25,14 @@ export class PlacesService {
       type,
     } = dto;
 
+    const category = await this.prismaService.category.findUnique({
+      where: { id: categoryId },
+    });
+
+    if (!category) {
+      throw new BadRequestException();
+    }
+
     const placeThumbnail = thumbnail
       ? await this.imageParseService.uploadImageAsWebp(
           thumbnail,
@@ -31,7 +40,7 @@ export class PlacesService {
         )
       : null;
 
-    const places = await this.prismaService.places.create({
+    const place = await this.prismaService.places.create({
       data: {
         address,
         detailAddress,
@@ -44,6 +53,13 @@ export class PlacesService {
       },
     });
 
-    return places;
+    await this.prismaService.placeCategory.create({
+      data: {
+        categoryId: category.id,
+        placeId: place.id,
+      },
+    });
+
+    return place;
   }
 }

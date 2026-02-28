@@ -45,7 +45,8 @@ model Places {
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @default(now()) @map("updated_at")
 
-  myPlaces MyPlaces[]
+  categories PlaceCategory[]
+  myPlaces   MyPlaces[]
 
   @@index([name])
   @@index([address])
@@ -63,4 +64,27 @@ model MyPlaces {
 
   @@id([placeId, userId])
   @@map("my_places")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(20) @unique()
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @default(now()) @map("updated_at")
+
+  placeCategories PlaceCategory[]
+
+  @@map("category")
+}
+
+model PlaceCategory {
+  placeId    String   @db.Uuid @map("place_id") @unique
+  categoryId Int      @map("category_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @default(now()) @map("updated_at")
+  place      Places   @relation(fields: [placeId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id([placeId, categoryId])
+  @@map("place_category")
 }

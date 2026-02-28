@@ -1,6 +1,7 @@
 import { Transform } from 'class-transformer';
 import {
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -42,4 +43,7 @@ export class RegisterPlaceDto {
 
   @IsEnum(PlaceType)
   type: PlaceType;
+
+  @IsInt()
+  categoryId: number;
 }
