@@ -19,12 +19,25 @@ enum PlaceType {
   @@map("place_type")
 }
 
+enum SocialType {
+  KAKAO
+  GOOGLE
+  FACEBOOK
+  INSTAGRAM
+  APPLE
+  NAVER
+
+  @@map("social_type")
+}
+
 model Users {
-  id        String   @db.Uuid @id @default(uuid())
-  nickname  String   @db.VarChar(20) @unique
-  profile   String?  @db.VarChar(100)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @default(now()) @map("updated_at")
+  id         String     @db.Uuid @id @default(uuid())
+  nickname   String     @db.VarChar(20) @unique
+  profile    String?    @db.VarChar(100)
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @default(now()) @map("updated_at")
+  socialType SocialType @map("social_type")
+  socialId   String     @map("social_id") @unique
 
   myPlaces MyPlaces[]
 
