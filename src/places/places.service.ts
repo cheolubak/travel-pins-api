@@ -14,24 +14,34 @@ export class PlacesService {
   ) {}
 
   async getPlaces(query: QueryPlaceDto) {
-    const { leftTopLat, leftTopLng, rightBottomLat, rightBottomLng } = query;
+    const { leftBottomLat, leftBottomLng, rightTopLat, rightTopLng } = query;
 
     return this.prismaService.places.findMany({
-      include: {
+      relationLoadStrategy: 'join',
+      select: {
+        address: true,
         category: {
           select: {
             name: true,
           },
         },
+        detailAddress: true,
+        id: true,
+        lat: true,
+        lng: true,
+        name: true,
+        postcode: true,
+        thumbnail: true,
+        type: true,
       },
       where: {
         lat: {
-          gte: rightBottomLat,
-          lte: leftTopLat,
+          gte: leftBottomLat,
+          lte: rightTopLat,
         },
         lng: {
-          gte: leftTopLng,
-          lte: rightBottomLng,
+          gte: leftBottomLng,
+          lte: rightTopLng,
         },
       },
     });

@@ -1,20 +1,20 @@
-import { Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import { IsNumber } from 'class-validator';
 
 export class QueryPlaceDto {
-  @Type(() => Number)
   @IsNumber()
-  leftTopLat: number;
+  @Transform(({ value }) => Number(value))
+  rightTopLat: number;
 
-  @Type(() => Number)
   @IsNumber()
-  leftTopLng: number;
+  @Transform(({ value }) => Number(value))
+  rightTopLng: number;
 
-  @Type(() => Number)
   @IsNumber()
-  rightBottomLat: number;
+  @Transform(({ value }) => Number(value))
+  leftBottomLat: number;
 
-  @Type(() => Number)
   @IsNumber()
-  rightBottomLng: number;
+  @Transform(({ value }) => Number(value))
+  leftBottomLng: number;
 }
