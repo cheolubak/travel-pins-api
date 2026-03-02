@@ -4,4 +4,8 @@ export class LoginDto {
   @IsNotEmpty()
   @IsString()
   accessToken: string;
+
+  @IsNotEmpty()
+  @IsString()
+  sessionId: string;
 }
