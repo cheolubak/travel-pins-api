@@ -1,0 +1,164 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../generated/prisma"
+  moduleFormat    = "cjs"
+  previewFeatures = ["relationJoins"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum PlaceType {
+  CAFE
+  FOOD
+  STORE
+  PLACE
+  PARKING
+
+  @@map("place_type")
+}
+
+enum SocialType {
+  KAKAO
+  GOOGLE
+  FACEBOOK
+  INSTAGRAM
+  APPLE
+  NAVER
+
+  @@map("social_type")
+}
+
+model Users {
+  id         String     @db.Uuid @id @default(uuid())
+  nickname   String     @db.VarChar(20) @unique
+  profile    String?    @db.VarChar(100)
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @default(now()) @map("updated_at")
+  socialType SocialType @map("social_type")
+  socialId   String     @map("social_id") @unique
+
+  myPlaces MyPlaces[]
+  groups   GroupMembers[]
+
+  @@index([createdAt])
+  @@map("users")
+}
+
+model Places {
+  id            String    @db.Uuid @id @default(uuid())
+  name          String    @db.VarChar(20)
+  address       String    @db.VarChar(200)
+  detailAddress String?   @db.VarChar(100) @map("detail_address")
+  postcode      String    @db.VarChar(6)
+  thumbnail     String?   @db.VarChar(100)
+  type          PlaceType
+  lat           Float
+  lng           Float
+  categoryId    Int?      @map("category_id")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @default(now()) @map("updated_at")
+
+  category Category?  @relation(fields: [categoryId], references: [id])
+  myPlaces MyPlaces[]
+  reviews  Reviews[]
+
+  @@index([name])
+  @@index([address])
+  @@index([type])
+  @@index([lat])
+  @@index([lng])
+  @@map("places")
+}
+
+model MyPlaces {
+  placeId   String   @db.Uuid @map("place_id")
+  userId    String   @db.Uuid @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  place     Places   @relation(fields: [placeId], references: [id])
+  user      Users    @relation(fields: [userId], references: [id])
+
+  @@id([placeId, userId])
+  @@map("my_places")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(20) @unique()
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @default(now()) @map("updated_at")
+
+  places Places[]
+
+  @@map("category")
+}
+
+model Reviews {
+  id        String   @db.Uuid @id @default(uuid())
+  title     String   @db.VarChar(100)
+  content   String   @db.Text
+  placeId   String   @db.Uuid @map("place_id")
+  deleted   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  place  Places         @relation(fields: [placeId], references: [id])
+  images ReviewImages[]
+
+  @@map("reviews")
+}
+
+model ReviewImages {
+  id        String   @db.Uuid @id @default(uuid())
+  reviewId  String   @db.Uuid @map("review_id")
+  pathname  String   @db.VarChar(100)
+  deleted   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @default(now()) @map("updated_at")
+
+  review Reviews @relation(fields: [reviewId], references: [id])
+
+  @@map("review_images")
+}
+
+model Groups {
+  id          String   @db.Uuid @id @default(uuid())
+  name        String   @db.VarChar(100)
+  description String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @map("updated_at")
+
+  members GroupMembers[]
+  travels Travels[]
+
+  @@map("groups")
+}
+
+model GroupMembers {
+  groupId   String   @db.Uuid @map("group_id")
+  userId    String   @db.Uuid @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  group Groups @relation(fields: [groupId], references: [id])
+  user  Users  @relation(fields: [userId], references: [id])
+
+  @@id([groupId, userId])
+  @@map("group_members")
+}
+
+model Travels {
+  id        String   @db.Uuid @id @default(uuid())
+  name      String   @db.VarChar(100)
+  region    String   @db.VarChar(100)
+  deleted   Boolean  @default(false)
+  groupId   String?  @db.Uuid @map("group_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  group Groups? @relation(fields: [groupId], references: [id])
+
+  @@map("travels")
+}

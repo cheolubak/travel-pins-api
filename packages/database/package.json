@@ -1,0 +1,25 @@
+{
+  "name": "@travel-pins/database",
+  "version": "0.0.0",
+  "private": true,
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "build": "prisma generate && tsc && ln -snf ../generated dist/generated",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "lint": "eslint \"src/**/*.ts\" --fix"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@prisma/client": "^6.19.2"
+  },
+  "devDependencies": {
+    "@travel-pins/eslint-config": "workspace:*",
+    "@travel-pins/typescript-config": "workspace:*",
+    "dotenv": "^16.4.5",
+    "prisma": "^6.19.2",
+    "typescript": "^5.1.3"
+  }
+}
