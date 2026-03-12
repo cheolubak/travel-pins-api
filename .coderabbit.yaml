@@ -3,6 +3,8 @@ language: "ko"
 reviews:
   profile: chill
 
+  request_changes_workflow: true
+
   auto_review:
     enabled: true
 
