@@ -43,6 +43,7 @@ model Users {
 
   myPlaces MyPlaces[]
   groups   GroupMembers[]
+  reviews  Reviews[]
 
   @@index([createdAt])
   @@map("users")
@@ -101,11 +102,13 @@ model Reviews {
   title     String   @db.VarChar(100)
   content   String   @db.Text
   placeId   String   @db.Uuid @map("place_id")
+  userId    String   @db.Uuid @map("user_id")
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
   place  Places         @relation(fields: [placeId], references: [id])
+  user   Users          @relation(fields: [userId], references: [id])
   images ReviewImages[]
 
   @@map("reviews")
