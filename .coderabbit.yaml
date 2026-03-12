@@ -1,0 +1,8 @@
+language: "ko"
+
+reviews:
+  profile: chill
+  instructions: |
+    - 한국어로 리뷰 작성
+    - Nest.js, Prisma 베스트 프렉티스 기준으로 리뷰
+    - 성능, 유지보수 관점에서 피드백
