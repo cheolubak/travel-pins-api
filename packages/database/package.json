@@ -9,7 +9,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
-    "db:push:force": "prisma db push --accept-data-loss",
+    "db:push:force": "echo '⚠️  DEV ONLY: --accept-data-loss' && prisma db push --accept-data-loss",
     "lint": "eslint \"src/**/*.ts\" --fix"
   },
   "dependencies": {
