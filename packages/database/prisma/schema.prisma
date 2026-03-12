@@ -33,13 +33,13 @@ enum SocialType {
 }
 
 model Users {
-  id         String     @db.Uuid @id @default(uuid())
-  nickname   String     @db.VarChar(20) @unique
+  id         String     @id @default(uuid()) @db.Uuid
+  nickname   String     @unique @db.VarChar(20)
   profile    String?    @db.VarChar(100)
   createdAt  DateTime   @default(now()) @map("created_at")
-  updatedAt  DateTime   @updatedAt @default(now()) @map("updated_at")
+  updatedAt  DateTime   @default(now()) @updatedAt @map("updated_at")
   socialType SocialType @map("social_type")
-  socialId   String     @map("social_id") @unique
+  socialId   String     @unique @map("social_id")
 
   myPlaces MyPlaces[]
   groups   GroupMembers[]
@@ -50,10 +50,10 @@ model Users {
 }
 
 model Places {
-  id            String    @db.Uuid @id @default(uuid())
+  id            String    @id @default(uuid()) @db.Uuid
   name          String    @db.VarChar(20)
   address       String    @db.VarChar(200)
-  detailAddress String?   @db.VarChar(100) @map("detail_address")
+  detailAddress String?   @map("detail_address") @db.VarChar(100)
   postcode      String    @db.VarChar(6)
   thumbnail     String?   @db.VarChar(100)
   type          PlaceType
@@ -61,7 +61,7 @@ model Places {
   lng           Float
   categoryId    Int?      @map("category_id")
   createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @default(now()) @map("updated_at")
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
 
   category Category?  @relation(fields: [categoryId], references: [id])
   myPlaces MyPlaces[]
@@ -76,8 +76,8 @@ model Places {
 }
 
 model MyPlaces {
-  placeId   String   @db.Uuid @map("place_id")
-  userId    String   @db.Uuid @map("user_id")
+  placeId   String   @map("place_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   place     Places   @relation(fields: [placeId], references: [id])
   user      Users    @relation(fields: [userId], references: [id])
@@ -88,9 +88,9 @@ model MyPlaces {
 
 model Category {
   id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(20) @unique()
+  name      String   @unique() @db.VarChar(20)
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @default(now()) @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   places Places[]
 
@@ -98,11 +98,11 @@ model Category {
 }
 
 model Reviews {
-  id        String   @db.Uuid @id @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   title     String   @db.VarChar(100)
   content   String   @db.Text
-  placeId   String   @db.Uuid @map("place_id")
-  userId    String   @db.Uuid @map("user_id")
+  placeId   String   @map("place_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
@@ -115,12 +115,12 @@ model Reviews {
 }
 
 model ReviewImages {
-  id        String   @db.Uuid @id @default(uuid())
-  reviewId  String   @db.Uuid @map("review_id")
+  id        String   @id @default(uuid()) @db.Uuid
+  reviewId  String   @map("review_id") @db.Uuid
   pathname  String   @db.VarChar(100)
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @default(now()) @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   review Reviews @relation(fields: [reviewId], references: [id])
 
@@ -128,7 +128,7 @@ model ReviewImages {
 }
 
 model Groups {
-  id          String   @db.Uuid @id @default(uuid())
+  id          String   @id @default(uuid()) @db.Uuid
   name        String   @db.VarChar(100)
   description String   @db.Text
   createdAt   DateTime @default(now()) @map("created_at")
@@ -141,8 +141,8 @@ model Groups {
 }
 
 model GroupMembers {
-  groupId   String   @db.Uuid @map("group_id")
-  userId    String   @db.Uuid @map("user_id")
+  groupId   String   @map("group_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
   group Groups @relation(fields: [groupId], references: [id])
@@ -153,11 +153,11 @@ model GroupMembers {
 }
 
 model Travels {
-  id        String   @db.Uuid @id @default(uuid())
+  id        String   @id @default(uuid()) @db.Uuid
   name      String   @db.VarChar(100)
   region    String   @db.VarChar(100)
   deleted   Boolean  @default(false)
-  groupId   String?  @db.Uuid @map("group_id")
+  groupId   String?  @map("group_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
