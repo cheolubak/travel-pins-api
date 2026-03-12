@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { ImageParseModule } from './image-parse/image-parse.module';
 import { MyPlacesModule } from './my-places/my-places.module';
 import { PlacesModule } from './places/places.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   controllers: [AppController],
@@ -18,6 +19,7 @@ import { PlacesModule } from './places/places.module';
     ImageParseModule,
     PlacesModule,
     MyPlacesModule,
+    ReviewsModule,
     ConfigModule.forRoot({
       envFilePath: path.resolve(__dirname, '../../../.env'),
       isGlobal: true,

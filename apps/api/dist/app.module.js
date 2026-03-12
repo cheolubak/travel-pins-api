@@ -18,6 +18,7 @@ const auth_module_1 = require("./auth/auth.module");
 const image_parse_module_1 = require("./image-parse/image-parse.module");
 const my_places_module_1 = require("./my-places/my-places.module");
 const places_module_1 = require("./places/places.module");
+const reviews_module_1 = require("./reviews/reviews.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,6 +30,7 @@ exports.AppModule = AppModule = __decorate([
             image_parse_module_1.ImageParseModule,
             places_module_1.PlacesModule,
             my_places_module_1.MyPlacesModule,
+            reviews_module_1.ReviewsModule,
             config_1.ConfigModule.forRoot({
                 envFilePath: path.resolve(__dirname, '../../../.env'),
                 isGlobal: true,
