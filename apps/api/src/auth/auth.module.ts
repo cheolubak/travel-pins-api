@@ -6,11 +6,12 @@ import { ImageParseModule } from '../image-parse/image-parse.module';
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
+import { RequiredAuthGuard } from './required-auth.guard';
 
 @Module({
   controllers: [AuthController],
-  exports: [AuthService, AuthGuard],
+  exports: [AuthService, AuthGuard, RequiredAuthGuard],
   imports: [HttpModule, DatabaseModule, ImageParseModule],
-  providers: [AuthService, AuthGuard],
+  providers: [AuthService, AuthGuard, RequiredAuthGuard],
 })
 export class AuthModule {}

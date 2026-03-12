@@ -69,6 +69,66 @@ let AuthService = class AuthService {
         });
         return this.generateToken(user.id, sessionId);
     }
+    async loginWithNaver({ accessToken, sessionId }) {
+        const res = await this.httpService.axiosRef
+            .get(`https://openapi.naver.com/v1/nid/me`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        })
+            .then((res) => res.data);
+        const findUser = await this.prismaService.users.findUnique({
+            where: {
+                socialId: res.response.id,
+                socialType: 'NAVER',
+            },
+        });
+        if (findUser) {
+            return this.generateToken(findUser.id, sessionId);
+        }
+        const profile = res.response.profile_image
+            ? await this.imageParseService.uploadImageAsWebp(res.response.profile_image, `users/${(0, uuid_1.v4)()}`)
+            : null;
+        const user = await this.prismaService.users.create({
+            data: {
+                nickname: res.response.nickname || res.response.name || res.response.id,
+                profile,
+                socialId: res.response.id,
+                socialType: 'NAVER',
+            },
+        });
+        return this.generateToken(user.id, sessionId);
+    }
+    async loginWithGoogle({ accessToken, sessionId }) {
+        const res = await this.httpService.axiosRef
+            .get(`https://www.googleapis.com/oauth2/v2/userinfo`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        })
+            .then((res) => res.data);
+        const findUser = await this.prismaService.users.findUnique({
+            where: {
+                socialId: res.id,
+                socialType: 'GOOGLE',
+            },
+        });
+        if (findUser) {
+            return this.generateToken(findUser.id, sessionId);
+        }
+        const profile = res.picture
+            ? await this.imageParseService.uploadImageAsWebp(res.picture, `users/${(0, uuid_1.v4)()}`)
+            : null;
+        const user = await this.prismaService.users.create({
+            data: {
+                nickname: res.name || res.email || res.id,
+                profile,
+                socialId: res.id,
+                socialType: 'GOOGLE',
+            },
+        });
+        return this.generateToken(user.id, sessionId);
+    }
     async generateToken(userId, sessionId) {
         const payload = { sub: userId };
         const secret = this.configService.get('JWT_SECRET') + sessionId;
@@ -81,6 +141,16 @@ let AuthService = class AuthService {
             accessToken,
             refreshToken,
         };
+    }
+    async refreshToken({ refreshToken, sessionId }) {
+        try {
+            const secret = this.configService.get('JWT_SECRET') + sessionId;
+            const payload = await this.jwtService.verifyAsync(refreshToken, { secret });
+            return this.generateToken(payload.sub, sessionId);
+        }
+        catch {
+            throw new common_1.UnauthorizedException('Invalid refresh token');
+        }
     }
     async validateTokenUser(token, sessionId) {
         const secret = this.configService.get('JWT_SECRET') + sessionId;

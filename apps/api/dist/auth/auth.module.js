@@ -14,15 +14,16 @@ const image_parse_module_1 = require("../image-parse/image-parse.module");
 const auth_controller_1 = require("./auth.controller");
 const auth_guard_1 = require("./auth.guard");
 const auth_service_1 = require("./auth.service");
+const required_auth_guard_1 = require("./required-auth.guard");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         controllers: [auth_controller_1.AuthController],
-        exports: [auth_service_1.AuthService, auth_guard_1.AuthGuard],
+        exports: [auth_service_1.AuthService, auth_guard_1.AuthGuard, required_auth_guard_1.RequiredAuthGuard],
         imports: [axios_1.HttpModule, database_1.DatabaseModule, image_parse_module_1.ImageParseModule],
-        providers: [auth_service_1.AuthService, auth_guard_1.AuthGuard],
+        providers: [auth_service_1.AuthService, auth_guard_1.AuthGuard, required_auth_guard_1.RequiredAuthGuard],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '@travel-pins/database';
 import { ImageParseService } from '../image-parse/image-parse.service';
 import { LoginDto } from './dto/login.dto';
+import { RefreshDto } from './dto/refresh.dto';
 export declare class AuthService {
     private readonly httpService;
     private readonly prismaService;
@@ -24,7 +25,19 @@ export declare class AuthService {
         accessToken: string;
         refreshToken: string;
     }>;
+    loginWithNaver({ accessToken, sessionId }: LoginDto): Promise<{
+        accessToken: string;
+        refreshToken: string;
+    }>;
+    loginWithGoogle({ accessToken, sessionId }: LoginDto): Promise<{
+        accessToken: string;
+        refreshToken: string;
+    }>;
     generateToken(userId: string, sessionId: string): Promise<{
+        accessToken: string;
+        refreshToken: string;
+    }>;
+    refreshToken({ refreshToken, sessionId }: RefreshDto): Promise<{
         accessToken: string;
         refreshToken: string;
     }>;
