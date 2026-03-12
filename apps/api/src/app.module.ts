@@ -12,6 +12,7 @@ import { GroupsModule } from './groups/groups.module';
 import { MyPlacesModule } from './my-places/my-places.module';
 import { PlacesModule } from './places/places.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { TravelsModule } from './travels/travels.module';
 
 @Module({
   controllers: [AppController],
@@ -22,6 +23,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     MyPlacesModule,
     ReviewsModule,
     GroupsModule,
+    TravelsModule,
     ConfigModule.forRoot({
       envFilePath: path.resolve(__dirname, '../../../.env'),
       isGlobal: true,

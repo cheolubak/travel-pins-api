@@ -20,6 +20,7 @@ const groups_module_1 = require("./groups/groups.module");
 const my_places_module_1 = require("./my-places/my-places.module");
 const places_module_1 = require("./places/places.module");
 const reviews_module_1 = require("./reviews/reviews.module");
+const travels_module_1 = require("./travels/travels.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -33,6 +34,7 @@ exports.AppModule = AppModule = __decorate([
             my_places_module_1.MyPlacesModule,
             reviews_module_1.ReviewsModule,
             groups_module_1.GroupsModule,
+            travels_module_1.TravelsModule,
             config_1.ConfigModule.forRoot({
                 envFilePath: path.resolve(__dirname, '../../../.env'),
                 isGlobal: true,
