@@ -11,7 +11,6 @@ export class MyPlacesService {
 
   async getMyPlaces(userId: string) {
     return this.prismaService.myPlaces.findMany({
-      relationLoadStrategy: 'join',
       select: {
         createdAt: true,
         place: {

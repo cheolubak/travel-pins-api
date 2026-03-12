@@ -17,7 +17,6 @@ export class PlacesService {
     const { leftBottomLat, leftBottomLng, rightTopLat, rightTopLng } = query;
 
     return this.prismaService.places.findMany({
-      relationLoadStrategy: 'join',
       select: {
         address: true,
         category: {

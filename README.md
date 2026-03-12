@@ -1,73 +1,133 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Travel Pins API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+네이버 지도 기반 여행 장소 공유 서비스의 백엔드 API
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tech Stack
 
-## Description
+- **Runtime**: NestJS v10, TypeScript
+- **ORM**: Prisma v7 + `@prisma/adapter-pg`
+- **DB**: PostgreSQL (Supabase)
+- **Auth**: JWT + Kakao / Naver / Google OAuth
+- **Image**: Sharp → WebP → Supabase Storage
+- **Build**: pnpm workspace + Turborepo
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Project Structure
 
-## Installation
-
-```bash
-$ pnpm install
+```
+apps/api/                  → NestJS API (port 4000)
+packages/database/         → Prisma + DatabaseModule
+packages/eslint-config/    → Shared ESLint config
+packages/typescript-config/ → Shared TypeScript config
 ```
 
-## Running the app
+## Getting Started
+
+### Prerequisites
+
+- Node.js v20+
+- pnpm v10+
+- PostgreSQL (or Supabase)
+
+### Installation
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+pnpm install
 ```
 
-## Test
+### Environment Variables
+
+루트에 `.env` 파일 생성:
+
+```env
+DATABASE_URL=postgresql://...
+DIRECT_URL=postgresql://...
+SUPABASE_URL=https://...
+SUPABASE_ANON_KEY=...
+SUPABASE_STORAGE_BUCKET=...
+KAKAO_ADMIN_KEY=...
+NAVER_CLIENT_ID=...
+NAVER_CLIENT_SECRET=...
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+JWT_SECRET=...
+```
+
+### Development
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+pnpm db:generate  # Prisma 클라이언트 생성
+pnpm db:push      # 스키마를 DB에 반영
+pnpm dev           # 개발 서버 (port 4000)
 ```
 
-## Support
+### Build
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+pnpm build        # 프로덕션 빌드
+pnpm start        # 프로덕션 실행
+```
 
-## Stay in touch
+## API Endpoints
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Auth
 
-## License
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/auth/kakao` | 카카오 로그인 |
+| POST | `/auth/naver` | 네이버 로그인 |
+| POST | `/auth/google` | 구글 로그인 |
+| POST | `/auth/refresh` | 토큰 갱신 |
 
-Nest is [MIT licensed](LICENSE).
+### Places
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/places` | 지도 범위 내 장소 조회 |
+| POST | `/places` | 장소 등록 |
+
+### My Places
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/my-places` | 저장한 장소 목록 |
+| POST | `/my-places/:placeId` | 장소 저장 |
+| DELETE | `/my-places/:placeId` | 장소 저장 해제 |
+
+### Reviews
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/reviews?placeId=` | 장소별 리뷰 목록 |
+| GET | `/reviews/:id` | 리뷰 상세 |
+| POST | `/reviews` | 리뷰 작성 |
+| PATCH | `/reviews/:id` | 리뷰 수정 |
+| DELETE | `/reviews/:id` | 리뷰 삭제 |
+
+### Groups
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/groups` | 그룹 생성 |
+| GET | `/groups` | 내 그룹 목록 |
+| GET | `/groups/:id` | 그룹 상세 |
+| PATCH | `/groups/:id` | 그룹 수정 |
+| DELETE | `/groups/:id` | 그룹 삭제 |
+| POST | `/groups/:id/members` | 멤버 추가 |
+| DELETE | `/groups/:id/members/:userId` | 멤버 제거 |
+
+### Travels
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/travels` | 여행 생성 |
+| GET | `/travels` | 여행 목록 |
+| GET | `/travels/:id` | 여행 상세 |
+| PATCH | `/travels/:id` | 여행 수정 |
+| DELETE | `/travels/:id` | 여행 삭제 |
+
+### Users
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/users/me` | 내 프로필 조회 |
+| PATCH | `/users/me` | 프로필 수정 |

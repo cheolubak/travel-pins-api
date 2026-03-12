@@ -34,7 +34,6 @@ let TravelsService = class TravelsService {
         }
         return this.prismaService.travels.findMany({
             orderBy: { createdAt: 'desc' },
-            relationLoadStrategy: 'join',
             select: {
                 createdAt: true,
                 group: {
@@ -55,7 +54,6 @@ let TravelsService = class TravelsService {
     }
     async getTravel(userId, id) {
         const travel = await this.prismaService.travels.findFirst({
-            relationLoadStrategy: 'join',
             select: {
                 createdAt: true,
                 group: {

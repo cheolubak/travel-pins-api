@@ -13,13 +13,16 @@
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
-    "@prisma/client": "^6.19.2"
+    "@prisma/adapter-pg": "^7.5.0",
+    "@prisma/client": "^7.0.0",
+    "pg": "^8.20.0"
   },
   "devDependencies": {
     "@travel-pins/eslint-config": "workspace:*",
     "@travel-pins/typescript-config": "workspace:*",
+    "@types/pg": "^8.18.0",
     "dotenv": "^16.4.5",
-    "prisma": "^6.19.2",
+    "prisma": "^7.0.0",
     "typescript": "^5.1.3"
   }
 }

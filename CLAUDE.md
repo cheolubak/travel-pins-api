@@ -15,7 +15,7 @@
 ## 기술 스택
 
 - **Runtime**: NestJS v10, TypeScript
-- **ORM**: Prisma v7 (preview: relationJoins)
+- **ORM**: Prisma v7
 - **DB**: PostgreSQL (Supabase)
 - **인증**: JWT (1h 만료, Refresh Token 30d 만료) + Kakao OAuth, Naver OAuth, Google OAuth
   - `POST /auth/kakao` — 카카오 로그인 (Kakao API: `kapi.kakao.com/v2/user/me`)
@@ -36,6 +36,7 @@ packages/typescript-config/ → 공유 TS 설정 (@travel-pins/typescript-config
 
 - Prisma 생성 클라이언트: `packages/database/generated/prisma/` (gitignored)
 - Database 빌드 체인: `prisma generate → tsc → ln -snf ../generated dist/generated`
+- Prisma v7: datasource URL은 `prisma.config.ts`에서 관리, 런타임은 `@prisma/adapter-pg` 사용
 
 ## 주요 명령어
 

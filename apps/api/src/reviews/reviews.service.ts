@@ -17,7 +17,6 @@ export class ReviewsService {
   async getReviews(query: QueryReviewDto) {
     return this.prismaService.reviews.findMany({
       orderBy: { createdAt: 'desc' },
-      relationLoadStrategy: 'join',
       select: {
         content: true,
         createdAt: true,
@@ -48,7 +47,6 @@ export class ReviewsService {
 
   async getReview(id: string) {
     const review = await this.prismaService.reviews.findFirst({
-      relationLoadStrategy: 'join',
       select: {
         content: true,
         createdAt: true,

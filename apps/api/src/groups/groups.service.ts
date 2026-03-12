@@ -33,7 +33,6 @@ export class GroupsService {
 
   async getMyGroups(userId: string) {
     return this.prismaService.groups.findMany({
-      relationLoadStrategy: 'join',
       select: {
         createdAt: true,
         description: true,
@@ -63,7 +62,6 @@ export class GroupsService {
     await this.validateMembership(userId, id);
 
     return this.prismaService.groups.findUnique({
-      relationLoadStrategy: 'join',
       select: {
         createdAt: true,
         description: true,

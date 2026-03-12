@@ -18,7 +18,6 @@ let MyPlacesService = class MyPlacesService {
     }
     async getMyPlaces(userId) {
         return this.prismaService.myPlaces.findMany({
-            relationLoadStrategy: 'join',
             select: {
                 createdAt: true,
                 place: {
