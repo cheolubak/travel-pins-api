@@ -13,24 +13,33 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     }
     const adapter = new PrismaPg({ connectionString });
 
+    const isProduction = process.env['NODE_ENV'] === 'production';
+
     super({
       adapter,
-      log: [
-        { emit: 'event', level: 'query' },
-        { emit: 'stdout', level: 'info' },
-        { emit: 'stdout', level: 'warn' },
-        { emit: 'stdout', level: 'error' },
-      ],
+      log: isProduction
+        ? [
+            { emit: 'stdout', level: 'warn' },
+            { emit: 'stdout', level: 'error' },
+          ]
+        : [
+            { emit: 'event', level: 'query' },
+            { emit: 'stdout', level: 'info' },
+            { emit: 'stdout', level: 'warn' },
+            { emit: 'stdout', level: 'error' },
+          ],
     });
   }
 
   async onModuleInit() {
     await this.$connect();
 
-    this.$on('query', (e) => {
-      console.debug('Query: ' + e.query);
-      console.debug('Params: ' + e.params);
-      console.debug('Duration: ' + e.duration + 'ms');
-    });
+    if (process.env['NODE_ENV'] !== 'production') {
+      this.$on('query', (e) => {
+        console.debug('Query: ' + e.query);
+        console.debug('Params: ' + e.params);
+        console.debug('Duration: ' + e.duration + 'ms');
+      });
+    }
   }
 }
