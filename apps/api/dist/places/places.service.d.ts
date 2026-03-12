@@ -12,10 +12,10 @@ export declare class PlacesService {
         address: string;
         detailAddress: string;
         postcode: string;
-        lat: number;
-        lng: number;
         thumbnail: string;
         type: import("@travel-pins/database/dist/generated/prisma").$Enums.PlaceType;
+        lat: number;
+        lng: number;
         category: {
             name: string;
         };
@@ -28,10 +28,10 @@ export declare class PlacesService {
         address: string;
         detailAddress: string | null;
         postcode: string;
-        lat: number;
-        lng: number;
         thumbnail: string | null;
         type: import("@travel-pins/database/dist/generated/prisma").$Enums.PlaceType;
+        lat: number;
+        lng: number;
         categoryId: number | null;
     }>;
 }

@@ -19,12 +19,12 @@ export declare class MyPlacesController {
     }[]>;
     savePlace(req: any, placeId: string): Promise<{
         createdAt: Date;
-        placeId: string;
         userId: string;
+        placeId: string;
     }>;
     unsavePlace(req: any, placeId: string): Promise<{
         createdAt: Date;
-        placeId: string;
         userId: string;
+        placeId: string;
     }>;
 }

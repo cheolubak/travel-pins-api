@@ -27,14 +27,14 @@ export declare class ReviewsService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        place: {
-            id: string;
-            name: string;
-        };
         user: {
             id: string;
             nickname: string;
             profile: string;
+        };
+        place: {
+            id: string;
+            name: string;
         };
         title: string;
         content: string;
@@ -47,14 +47,14 @@ export declare class ReviewsService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        place: {
-            id: string;
-            name: string;
-        };
         user: {
             id: string;
             nickname: string;
             profile: string;
+        };
+        place: {
+            id: string;
+            name: string;
         };
         title: string;
         content: string;
@@ -67,20 +67,20 @@ export declare class ReviewsService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        placeId: string;
         userId: string;
+        deleted: boolean;
+        placeId: string;
         title: string;
         content: string;
-        deleted: boolean;
     }>;
     deleteReview(userId: string, id: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        placeId: string;
         userId: string;
+        deleted: boolean;
+        placeId: string;
         title: string;
         content: string;
-        deleted: boolean;
     }>;
 }
