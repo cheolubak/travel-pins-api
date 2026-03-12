@@ -4,7 +4,7 @@ import { PlacesService } from './places.service';
 export declare class PlacesController {
     private readonly placeService;
     constructor(placeService: PlacesService);
-    getPlaces(req: any, query: QueryPlaceDto): Promise<{
+    getPlaces(query: QueryPlaceDto): Promise<{
         id: string;
         name: string;
         address: string;

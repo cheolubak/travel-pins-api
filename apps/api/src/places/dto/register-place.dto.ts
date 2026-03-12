@@ -1,4 +1,4 @@
-import { Transform } from 'class-transformer';
+import { PlaceType } from '@travel-pins/database';
 import {
   IsEnum,
   IsInt,
@@ -8,7 +8,6 @@ import {
   IsString,
   Length,
 } from 'class-validator';
-import { PlaceType } from '@travel-pins/database';
 
 export class RegisterPlaceDto {
   @IsNotEmpty()

@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 
 import { AuthGuard } from '../auth/auth.guard';
 import { QueryPlaceDto } from './dto/query-place.dto';
@@ -19,9 +11,7 @@ export class PlacesController {
 
   @Get()
   @UseGuards(AuthGuard)
-  getPlaces(@Request() req, @Query() query: QueryPlaceDto) {
-    const user = req.user;
-
+  getPlaces(@Query() query: QueryPlaceDto) {
     return this.placeService.getPlaces(query);
   }
 

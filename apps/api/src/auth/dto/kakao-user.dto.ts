@@ -40,5 +40,5 @@ export class KakaoUserDto {
     profile_needs_agreement?: boolean;
     profile_nickname_needs_agreement?: boolean;
   };
-  for_partner?: {};
+  for_partner?: Record<string, never>;
 }

@@ -22,8 +22,7 @@ let PlacesController = class PlacesController {
     constructor(placeService) {
         this.placeService = placeService;
     }
-    getPlaces(req, query) {
-        const user = req.user;
+    getPlaces(query) {
         return this.placeService.getPlaces(query);
     }
     registerPlaces(dto) {
@@ -34,10 +33,9 @@ exports.PlacesController = PlacesController;
 __decorate([
     (0, common_1.Get)(),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Query)()),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, query_place_dto_1.QueryPlaceDto]),
+    __metadata("design:paramtypes", [query_place_dto_1.QueryPlaceDto]),
     __metadata("design:returntype", void 0)
 ], PlacesController.prototype, "getPlaces", null);
 __decorate([
