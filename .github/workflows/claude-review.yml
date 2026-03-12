@@ -73,7 +73,43 @@ jobs:
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
-            이 PR을 리뷰하고 코멘트로 작성해주세요.
-            리뷰 완료 후 심각한 문제가 없으면 `gh pr review ${{ github.event.pull_request.number }} --approve -b "LGTM"` 명령으로 승인해주세요.
+
+            이 PR을 리뷰해주세요.
+
+            ## 중요: 리뷰 코멘트 일괄 제출
+
+            개별 코멘트를 하나씩 작성하지 마세요. 반드시 모든 리뷰 코멘트를 모아서 GitHub API를 통해 **한 번에** 제출해야 합니다.
+            이렇게 해야 이메일 알림이 한 번만 발송됩니다.
+
+            ### 리뷰 절차:
+            1. `gh pr diff ${{ github.event.pull_request.number }}`로 변경사항을 확인합니다.
+            2. 모든 리뷰 의견을 수집합니다.
+            3. 심각한 문제가 없으면 아래 형식으로 **한 번에** 승인합니다:
+
+            ```bash
+            gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews \
+              -X POST \
+              -f event="APPROVE" \
+              -f body="리뷰 요약 내용" \
+              --input - <<'EOF'
+            {
+              "comments": [
+                {
+                  "path": "파일경로",
+                  "line": 라인번호,
+                  "body": "코멘트 내용"
+                }
+              ]
+            }
+            EOF
+            ```
+
+            4. 심각한 문제가 있으면 event를 "REQUEST_CHANGES"로 변경합니다.
+            5. 인라인 코멘트가 없으면 comments 배열을 비워서 제출합니다.
+
+            ### 주의사항:
+            - `mcp__github_inline_comment__create_inline_comment`는 사용하지 마세요.
+            - `gh pr comment`도 사용하지 마세요.
+            - 반드시 `gh api`로 리뷰를 한 번에 제출하세요.
           claude_args: |
-            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr review:*)"
+            --allowedTools "Bash(gh api:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
