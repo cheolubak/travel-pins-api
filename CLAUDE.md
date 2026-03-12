@@ -10,7 +10,7 @@
 네이버 지도 기반 여행 장소 공유 서비스의 백엔드 API.
 사용자가 방문한 장소를 저장하고, 리뷰·이미지를 남기며, 그룹 여행을 관리할 수 있다.
 
-핵심 기능: 장소 검색/저장, 리뷰 작성, 이미지 업로드, 그룹 여행, 카카오 로그인
+핵심 기능: 장소 검색/저장, 리뷰 작성, 이미지 업로드, 그룹 여행, 카카오, 네이버, 구글 로그인
 
 ## 기술 스택
 
@@ -18,6 +18,10 @@
 - **ORM**: Prisma v7 (preview: relationJoins)
 - **DB**: PostgreSQL (Supabase)
 - **인증**: JWT (1h 만료, Refresh Token 30d 만료) + Kakao OAuth, Naver OAuth, Google OAuth
+  - `POST /auth/kakao` — 카카오 로그인 (Kakao API: `kapi.kakao.com/v2/user/me`)
+  - `POST /auth/naver` — 네이버 로그인 (Naver API: `openapi.naver.com/v1/nid/me`)
+  - `POST /auth/google` — 구글 로그인 (Google API: `googleapis.com/oauth2/v2/userinfo`)
+  - `POST /auth/refresh` — 토큰 갱신
 - **이미지**: Sharp → WebP(quality:80, max 1024px) → Supabase Storage
 - **빌드**: pnpm workspace + Turborepo
 
@@ -55,6 +59,10 @@ pnpm db:push      # 스키마를 DB에 반영
 - `SUPABASE_ANON_KEY` — Supabase 익명 키
 - `SUPABASE_STORAGE_BUCKET` — 이미지 저장 버킷
 - `KAKAO_ADMIN_KEY` — 카카오 인증 키
+- `NAVER_CLIENT_ID` — 네이버 클라이언트 ID
+- `NAVER_CLIENT_SECRET` — 네이버 클라이언트 시크릿
+- `GOOGLE_CLIENT_ID` — 구글 클라이언트 ID
+- `GOOGLE_CLIENT_SECRET` — 구글 클라이언트 시크릿
 - `JWT_SECRET` — JWT 서명 키
 
 ## 코딩 컨벤션
