@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ImageParseModule } from './image-parse/image-parse.module';
+import { GroupsModule } from './groups/groups.module';
 import { MyPlacesModule } from './my-places/my-places.module';
 import { PlacesModule } from './places/places.module';
 import { ReviewsModule } from './reviews/reviews.module';
@@ -20,6 +21,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     PlacesModule,
     MyPlacesModule,
     ReviewsModule,
+    GroupsModule,
     ConfigModule.forRoot({
       envFilePath: path.resolve(__dirname, '../../../.env'),
       isGlobal: true,

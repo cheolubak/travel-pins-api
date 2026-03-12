@@ -16,6 +16,7 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const auth_module_1 = require("./auth/auth.module");
 const image_parse_module_1 = require("./image-parse/image-parse.module");
+const groups_module_1 = require("./groups/groups.module");
 const my_places_module_1 = require("./my-places/my-places.module");
 const places_module_1 = require("./places/places.module");
 const reviews_module_1 = require("./reviews/reviews.module");
@@ -31,6 +32,7 @@ exports.AppModule = AppModule = __decorate([
             places_module_1.PlacesModule,
             my_places_module_1.MyPlacesModule,
             reviews_module_1.ReviewsModule,
+            groups_module_1.GroupsModule,
             config_1.ConfigModule.forRoot({
                 envFilePath: path.resolve(__dirname, '../../../.env'),
                 isGlobal: true,
