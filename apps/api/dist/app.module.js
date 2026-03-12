@@ -7,15 +7,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
-const path = require("path");
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 const database_1 = require("@travel-pins/database");
+const path = require("path");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const auth_module_1 = require("./auth/auth.module");
 const image_parse_module_1 = require("./image-parse/image-parse.module");
+const my_places_module_1 = require("./my-places/my-places.module");
 const places_module_1 = require("./places/places.module");
 let AppModule = class AppModule {
 };
@@ -27,6 +28,7 @@ exports.AppModule = AppModule = __decorate([
             database_1.DatabaseModule,
             image_parse_module_1.ImageParseModule,
             places_module_1.PlacesModule,
+            my_places_module_1.MyPlacesModule,
             config_1.ConfigModule.forRoot({
                 envFilePath: path.resolve(__dirname, '../../../.env'),
                 isGlobal: true,
