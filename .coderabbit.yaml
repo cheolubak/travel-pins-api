@@ -2,6 +2,10 @@ language: "ko"
 
 reviews:
   profile: chill
+
+  auto_review:
+    enabled: true
+
   path_instructions:
     - path: "**/*"
       instructions: |

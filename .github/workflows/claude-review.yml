@@ -11,6 +11,72 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+      - name: Resolve Fixed Review Threads
+        if: github.event.action == 'synchronize'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.event.after }}
+        run: |
+          set +e
+          echo "🔍 해결된 리뷰 스레드 검색 중..."
+
+          OWNER=${REPO%/*}
+          NAME=${REPO#*/}
+
+          # GitHub API로 최신 push에서 변경된 파일 목록 조회
+          CHANGED_FILES=$(gh api "repos/$REPO/compare/${BEFORE_SHA}...${AFTER_SHA}" \
+            --jq '.files[].filename' 2>/dev/null || echo "")
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "변경된 파일이 없습니다."
+            exit 0
+          fi
+
+          echo "📝 변경된 파일:"
+          echo "$CHANGED_FILES"
+          echo ""
+
+          # 미해결 리뷰 스레드 중 bot이 작성한 것 조회 → 변경된 파일에 해당하면 resolve
+          gh api graphql -F owner="$OWNER" -F name="$NAME" -F number=$PR_NUMBER -f query='
+            query($owner: String!, $name: String!, $number: Int!) {
+              repository(owner: $owner, name: $name) {
+                pullRequest(number: $number) {
+                  reviewThreads(last: 100) {
+                    nodes {
+                      id
+                      isResolved
+                      path
+                      comments(first: 1) {
+                        nodes {
+                          author {
+                            login
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }' \
+            --jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false) | select(.comments.nodes[0].author.login == "github-actions[bot]") | "\(.id)\t\(.path)"' \
+            | while IFS=$'\t' read -r thread_id thread_path; do
+                if [ -n "$thread_id" ] && echo "$CHANGED_FILES" | grep -qxF "$thread_path"; then
+                  echo "✅ 스레드 resolve: $thread_path"
+                  gh api graphql -f query='
+                    mutation($threadId: ID!) {
+                      resolveReviewThread(input: {threadId: $threadId}) {
+                        thread { isResolved }
+                      }
+                    }' -F threadId="$thread_id" 2>/dev/null || echo "⚠️  resolve 실패 (무시)"
+                  sleep 0.3
+                fi
+              done
+
+          echo "✅ 해결된 스레드 resolve 완료"
+
       - name: Delete Previous Claude Reviews
         if: github.event.action == 'synchronize'
         env:
