@@ -9,7 +9,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
-    "db:push:force": "echo '⚠️  DEV ONLY: --accept-data-loss' && prisma db push --accept-data-loss",
+    "db:push:force": "echo '⚠️  DEV ONLY: 컬럼 삭제·타입 변경 등 비가역적 데이터 손실을 자동 승인합니다.' && printf 'y를 입력하면 실행합니다: ' && read -r ans && if [ \"$ans\" = 'y' ]; then prisma db push --accept-data-loss; else echo '취소되었습니다.'; fi",
     "lint": "eslint \"src/**/*.ts\" --fix"
   },
   "dependencies": {
