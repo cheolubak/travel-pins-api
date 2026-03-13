@@ -28,7 +28,43 @@ export class ImageParseService {
    * @param path 저장할 경로 (예: 'posts/my-image')  확장자 없이 전달하면 .webp가 자동 추가됩니다.
    * @returns 저장된 이미지의 public URL
    */
+  private validateUrl(url: string): void {
+    let parsed: URL;
+    try {
+      parsed = new URL(url);
+    } catch {
+      throw new Error(`Invalid URL: ${url}`);
+    }
+
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      throw new Error(`Unsupported protocol: ${parsed.protocol}`);
+    }
+
+    const hostname = parsed.hostname;
+    const privatePatterns = [
+      /^localhost$/i,
+      /^127\./,
+      /^10\./,
+      /^172\.(1[6-9]|2\d|3[01])\./,
+      /^192\.168\./,
+      /^169\.254\./,
+      /^0\./,
+      /^\[::1\]$/,
+      /^\[fc/i,
+      /^\[fd/i,
+      /^\[fe80:/i,
+    ];
+
+    for (const pattern of privatePatterns) {
+      if (pattern.test(hostname)) {
+        throw new Error(`Access to private network is not allowed: ${hostname}`);
+      }
+    }
+  }
+
   async uploadImageAsWebp(imageUrl: string, path: string): Promise<string> {
+    this.validateUrl(imageUrl);
+
     const response = await fetch(imageUrl);
 
     if (!response.ok) {

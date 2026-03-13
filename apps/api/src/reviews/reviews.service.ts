@@ -38,6 +38,8 @@ export class ReviewsService {
           },
         },
       },
+      skip: query.offset,
+      take: query.limit,
       where: {
         deleted: false,
         placeId: query.placeId,
@@ -138,8 +140,8 @@ export class ReviewsService {
 
     return this.prismaService.reviews.update({
       data: {
-        ...(dto.title && { title: dto.title }),
-        ...(dto.content && { content: dto.content }),
+        ...(dto.title !== undefined && { title: dto.title }),
+        ...(dto.content !== undefined && { content: dto.content }),
       },
       where: { id },
     });

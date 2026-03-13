@@ -1,10 +1,12 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '@travel-pins/database';
 
+import { AddTravelPlaceDto } from './dto/add-travel-place.dto';
 import { CreateTravelDto } from './dto/create-travel.dto';
 import { QueryTravelDto } from './dto/query-travel.dto';
 import { UpdateTravelDto } from './dto/update-travel.dto';
@@ -23,6 +25,7 @@ export class TravelsService {
         groupId: dto.groupId || null,
         name: dto.name,
         region: dto.region,
+        userId,
       },
     });
   }
@@ -46,9 +49,11 @@ export class TravelsService {
         name: true,
         region: true,
       },
+      skip: query.offset,
+      take: query.limit,
       where: {
         deleted: false,
-        ...(query.groupId && { groupId: query.groupId }),
+        ...(query.groupId ? { groupId: query.groupId } : { userId }),
       },
     });
   }
@@ -76,8 +81,28 @@ export class TravelsService {
         },
         id: true,
         name: true,
+        places: {
+          orderBy: { sortOrder: 'asc' },
+          select: {
+            createdAt: true,
+            memo: true,
+            place: {
+              select: {
+                address: true,
+                id: true,
+                lat: true,
+                lng: true,
+                name: true,
+                thumbnail: true,
+                type: true,
+              },
+            },
+            sortOrder: true,
+          },
+        },
         region: true,
         updatedAt: true,
+        userId: true,
       },
       where: { deleted: false, id },
     });
@@ -88,6 +113,8 @@ export class TravelsService {
 
     if (travel.group) {
       await this.validateGroupMembership(userId, travel.group.id);
+    } else if (travel.userId !== userId) {
+      throw new ForbiddenException('Not the owner of this travel');
     }
 
     return travel;
@@ -102,14 +129,12 @@ export class TravelsService {
       throw new NotFoundException('Travel not found');
     }
 
-    if (travel.groupId) {
-      await this.validateGroupMembership(userId, travel.groupId);
-    }
+    await this.validateTravelAccess(userId, travel);
 
     return this.prismaService.travels.update({
       data: {
-        ...(dto.name && { name: dto.name }),
-        ...(dto.region && { region: dto.region }),
+        ...(dto.name !== undefined && { name: dto.name }),
+        ...(dto.region !== undefined && { region: dto.region }),
       },
       where: { id },
     });
@@ -124,14 +149,100 @@ export class TravelsService {
       throw new NotFoundException('Travel not found');
     }
 
-    if (travel.groupId) {
-      await this.validateGroupMembership(userId, travel.groupId);
-    }
+    await this.validateTravelAccess(userId, travel);
 
     return this.prismaService.travels.update({
       data: { deleted: true },
       where: { id },
     });
+  }
+
+  async addPlace(userId: string, travelId: string, dto: AddTravelPlaceDto) {
+    const travel = await this.prismaService.travels.findFirst({
+      where: { deleted: false, id: travelId },
+    });
+
+    if (!travel) {
+      throw new NotFoundException('Travel not found');
+    }
+
+    await this.validateTravelAccess(userId, travel);
+
+    const place = await this.prismaService.places.findUnique({
+      where: { id: dto.placeId },
+    });
+
+    if (!place) {
+      throw new NotFoundException('Place not found');
+    }
+
+    const existing = await this.prismaService.travelPlaces.findUnique({
+      where: { travelId_placeId: { placeId: dto.placeId, travelId } },
+    });
+
+    if (existing) {
+      throw new ConflictException('Place already added to this travel');
+    }
+
+    return this.prismaService.travelPlaces.create({
+      data: {
+        memo: dto.memo,
+        placeId: dto.placeId,
+        sortOrder: dto.sortOrder ?? 0,
+        travelId,
+      },
+      select: {
+        createdAt: true,
+        memo: true,
+        place: {
+          select: {
+            address: true,
+            id: true,
+            lat: true,
+            lng: true,
+            name: true,
+            thumbnail: true,
+            type: true,
+          },
+        },
+        sortOrder: true,
+      },
+    });
+  }
+
+  async removePlace(userId: string, travelId: string, placeId: string) {
+    const travel = await this.prismaService.travels.findFirst({
+      where: { deleted: false, id: travelId },
+    });
+
+    if (!travel) {
+      throw new NotFoundException('Travel not found');
+    }
+
+    await this.validateTravelAccess(userId, travel);
+
+    const travelPlace = await this.prismaService.travelPlaces.findUnique({
+      where: { travelId_placeId: { placeId, travelId } },
+    });
+
+    if (!travelPlace) {
+      throw new NotFoundException('Place not found in this travel');
+    }
+
+    return this.prismaService.travelPlaces.delete({
+      where: { travelId_placeId: { placeId, travelId } },
+    });
+  }
+
+  private async validateTravelAccess(
+    userId: string,
+    travel: { groupId: string | null; userId: string },
+  ) {
+    if (travel.groupId) {
+      await this.validateGroupMembership(userId, travel.groupId);
+    } else if (travel.userId !== userId) {
+      throw new ForbiddenException('Not the owner of this travel');
+    }
   }
 
   private async validateGroupMembership(userId: string, groupId: string) {

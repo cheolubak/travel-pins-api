@@ -10,9 +10,13 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const { authorization, sessionid } = request.headers;
 
+    if (!authorization || !sessionid) {
+      return true;
+    }
+
     const accessToken = authorization.split(' ').at(1);
 
-    if (!accessToken || !sessionid) {
+    if (!accessToken) {
       return true;
     }
 

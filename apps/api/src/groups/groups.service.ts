@@ -97,8 +97,8 @@ export class GroupsService {
 
     return this.prismaService.groups.update({
       data: {
-        ...(dto.name && { name: dto.name }),
-        ...(dto.description && { description: dto.description }),
+        ...(dto.name !== undefined && { name: dto.name }),
+        ...(dto.description !== undefined && { description: dto.description }),
       },
       where: { id },
     });
@@ -106,6 +106,11 @@ export class GroupsService {
 
   async deleteGroup(userId: string, id: string) {
     await this.validateMembership(userId, id);
+
+    await this.prismaService.travels.updateMany({
+      data: { deleted: true },
+      where: { groupId: id, deleted: false },
+    });
 
     await this.prismaService.groupMembers.deleteMany({
       where: { groupId: id },

@@ -28,6 +28,30 @@ export class AuthService {
     });
   }
 
+  private async generateUniqueNickname(baseNickname: string): Promise<string> {
+    const trimmed = baseNickname.slice(0, 16);
+
+    const existing = await this.prismaService.users.findUnique({
+      where: { nickname: trimmed },
+    });
+
+    if (!existing) {
+      return trimmed;
+    }
+
+    for (let i = 1; i <= 100; i++) {
+      const candidate = `${trimmed}_${i}`;
+      const found = await this.prismaService.users.findUnique({
+        where: { nickname: candidate },
+      });
+      if (!found) {
+        return candidate;
+      }
+    }
+
+    return `${trimmed}_${Date.now()}`;
+  }
+
   async loginWithKakao({ accessToken, sessionId }: LoginDto) {
     const res = await this.httpService.axiosRef
       .get<KakaoUserDto>(`https://kapi.kakao.com/v2/user/me`, {
@@ -46,7 +70,7 @@ export class AuthService {
       })
       .then((res) => res.data);
 
-    const findUser = await this.prismaService.users.findUnique({
+    const findUser = await this.prismaService.users.findFirst({
       where: {
         socialId: res.id.toString(),
         socialType: 'KAKAO',
@@ -64,9 +88,13 @@ export class AuthService {
         )
       : null;
 
+    const nickname = await this.generateUniqueNickname(
+      res.kakao_account.profile.nickname,
+    );
+
     const user = await this.prismaService.users.create({
       data: {
-        nickname: res.kakao_account.profile.nickname,
+        nickname,
         profile,
         socialId: res.id.toString(),
         socialType: 'KAKAO',
@@ -85,7 +113,7 @@ export class AuthService {
       })
       .then((res) => res.data);
 
-    const findUser = await this.prismaService.users.findUnique({
+    const findUser = await this.prismaService.users.findFirst({
       where: {
         socialId: res.response.id,
         socialType: 'NAVER',
@@ -103,9 +131,13 @@ export class AuthService {
         )
       : null;
 
+    const nickname = await this.generateUniqueNickname(
+      res.response.nickname || res.response.name || res.response.id,
+    );
+
     const user = await this.prismaService.users.create({
       data: {
-        nickname: res.response.nickname || res.response.name || res.response.id,
+        nickname,
         profile,
         socialId: res.response.id,
         socialType: 'NAVER',
@@ -124,7 +156,7 @@ export class AuthService {
       })
       .then((res) => res.data);
 
-    const findUser = await this.prismaService.users.findUnique({
+    const findUser = await this.prismaService.users.findFirst({
       where: {
         socialId: res.id,
         socialType: 'GOOGLE',
@@ -142,9 +174,13 @@ export class AuthService {
         )
       : null;
 
+    const nickname = await this.generateUniqueNickname(
+      res.name || res.email || res.id,
+    );
+
     const user = await this.prismaService.users.create({
       data: {
-        nickname: res.name || res.email || res.id,
+        nickname,
         profile,
         socialId: res.id,
         socialType: 'GOOGLE',

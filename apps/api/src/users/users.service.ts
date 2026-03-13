@@ -57,8 +57,8 @@ export class UsersService {
 
     return this.prismaService.users.update({
       data: {
-        ...(dto.nickname && { nickname: dto.nickname }),
-        ...(profilePath && { profile: profilePath }),
+        ...(dto.nickname !== undefined && { nickname: dto.nickname }),
+        ...(profilePath !== undefined && { profile: profilePath }),
       },
       select: {
         id: true,

@@ -33,6 +33,8 @@ export class PlacesService {
         thumbnail: true,
         type: true,
       },
+      skip: query.offset,
+      take: query.limit,
       where: {
         lat: {
           gte: leftBottomLat,

@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 
 import { RequiredAuthGuard } from '../auth/required-auth.guard';
+import { AddTravelPlaceDto } from './dto/add-travel-place.dto';
 import { CreateTravelDto } from './dto/create-travel.dto';
 import { QueryTravelDto } from './dto/query-travel.dto';
 import { UpdateTravelDto } from './dto/update-travel.dto';
@@ -50,5 +51,23 @@ export class TravelsController {
   @Delete(':id')
   deleteTravel(@Request() req, @Param('id', ParseUUIDPipe) id: string) {
     return this.travelsService.deleteTravel(req.user.id, id);
+  }
+
+  @Post(':id/places')
+  addPlace(
+    @Request() req,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: AddTravelPlaceDto,
+  ) {
+    return this.travelsService.addPlace(req.user.id, id, dto);
+  }
+
+  @Delete(':id/places/:placeId')
+  removePlace(
+    @Request() req,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('placeId', ParseUUIDPipe) placeId: string,
+  ) {
+    return this.travelsService.removePlace(req.user.id, id, placeId);
   }
 }
