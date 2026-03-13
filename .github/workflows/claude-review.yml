@@ -11,6 +11,11 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+      - name: Checkout Claude Skills
+        uses: actions/checkout@v4
+        with:
+          repository: cheolubak/claude-skills
+          path: .claude-skills
       - name: Run Claude Code Review
         uses: anthropics/claude-code-action@v1
         with:
@@ -20,17 +25,16 @@ jobs:
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
-            
-            이 PR을 리뷰하고 코멘트로 작성해주세요.
-            
-            다음 사항에 중점을 두고 이 PR을 검토해 주세요.
-            - 코드 품질 및 모범 사례
-            - 잠재적인 버그 또는 문제
-            - 보안 관련 사항
-            - 성능 고려
-            
+
+            이 PR을 리뷰해주세요.
+
+            리뷰 가이드라인:
+            - .claude-skills/agents/nestjs-reviewer.md 를 읽고 해당 에이전트 역할로 리뷰
+            - .claude-skills/agents/code-simplifier.md 를 읽고 코드 단순화 관점에서 리뷰
+            - 필요한 스킬은 .claude-skills/skills/ 디렉토리에서 참조
+
             구체적인 문제에 대해서는 인라인 주석을 사용하여 자세한 피드백을 제공해주세요.
-            
+
             리뷰 완료 후 심각한 문제가 없으면 `gh pr review ${{ github.event.pull_request.number }} --approve -b "LGTM"` 명령으로 승인해주세요.
           claude_args: |
-            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr review:*)"
+            --allowedTools "Read,Glob,Grep,mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr review:*)"
