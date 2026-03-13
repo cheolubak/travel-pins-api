@@ -60,3 +60,5 @@ packages/database/generated/prisma
 
 # Turborepo
 .turbo
+
+backup

@@ -36,14 +36,12 @@ model Users {
   createdAt  DateTime   @default(now()) @map("created_at")
   updatedAt  DateTime   @default(now()) @updatedAt @map("updated_at")
   socialType SocialType @map("social_type")
-  socialId   String     @map("social_id")
+  socialId   String     @unique @map("social_id")
 
   myPlaces MyPlaces[]
   groups   GroupMembers[]
   reviews  Reviews[]
-  travels  Travels[]
 
-  @@unique([socialId, socialType])
   @@index([createdAt])
   @@map("users")
 }
@@ -62,15 +60,15 @@ model Places {
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
 
-  category     Category?      @relation(fields: [categoryId], references: [id])
-  myPlaces     MyPlaces[]
-  reviews      Reviews[]
-  travelPlaces TravelPlaces[]
+  category Category?  @relation(fields: [categoryId], references: [id])
+  myPlaces MyPlaces[]
+  reviews  Reviews[]
 
   @@index([name])
   @@index([address])
   @@index([type])
-  @@index([lat, lng])
+  @@index([lat])
+  @@index([lng])
   @@map("places")
 }
 
@@ -104,13 +102,12 @@ model Reviews {
   userId    String   @map("user_id") @db.Uuid
   deleted   Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
   place  Places         @relation(fields: [placeId], references: [id])
   user   Users          @relation(fields: [userId], references: [id])
   images ReviewImages[]
 
-  @@index([placeId, createdAt])
   @@map("reviews")
 }
 
@@ -157,29 +154,11 @@ model Travels {
   name      String   @db.VarChar(100)
   region    String   @db.VarChar(100)
   deleted   Boolean  @default(false)
-  userId    String   @map("user_id") @db.Uuid
   groupId   String?  @map("group_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  user   Users          @relation(fields: [userId], references: [id])
-  group  Groups?        @relation(fields: [groupId], references: [id])
-  places TravelPlaces[]
+  group Groups? @relation(fields: [groupId], references: [id])
 
-  @@index([userId])
   @@map("travels")
-}
-
-model TravelPlaces {
-  travelId  String   @map("travel_id") @db.Uuid
-  placeId   String   @map("place_id") @db.Uuid
-  sortOrder Int      @default(0) @map("sort_order")
-  memo      String?  @db.VarChar(200)
-  createdAt DateTime @default(now()) @map("created_at")
-
-  travel Travels @relation(fields: [travelId], references: [id])
-  place  Places  @relation(fields: [placeId], references: [id])
-
-  @@id([travelId, placeId])
-  @@map("travel_places")
 }

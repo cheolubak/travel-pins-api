@@ -14,7 +14,11 @@
     "db:push:force": "pnpm --filter @travel-pins/database db:push:force"
   },
   "devDependencies": {
+    "@types/proj4": "^2.19.0",
+    "dotenv": "^16.6.1",
     "prettier": "^3.0.0",
+    "proj4": "^2.20.4",
+    "tsx": "^4.21.0",
     "turbo": "^2.4.4"
   },
   "pnpm": {
